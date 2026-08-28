@@ -1,0 +1,6 @@
+rosbags>=0.11
+opencv-python
+numpy
+pyyaml
+python-xlib
+scipy
