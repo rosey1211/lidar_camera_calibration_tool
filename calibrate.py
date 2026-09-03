@@ -302,38 +302,40 @@ WIN    = 'LiDAR-Camera Calibration'
 # Trackbar names include range description; OpenCV shows the raw integer beside
 # each bar so we encode the scale in the name so the user knows the mapping.
 _TNAMES = (
-    'tx  range=-3.0..+3.0 m  (1 step = 1 cm)',
-    'ty  range=-3.0..+3.0 m  (1 step = 1 cm)',
-    'tz  range=-3.0..+3.0 m  (1 step = 1 cm)',
+    'tx  range=-5.0..+5.0 m  (1 step = 1 cm)',
+    'ty  range=-5.0..+5.0 m  (1 step = 1 cm)',
+    'tz  range=-10.0..+10.0 m  (1 step = 1 cm)',
     'rx  range=-180..+180 deg  (1 step = 0.5 deg)',
     'ry  range=-180..+180 deg  (1 step = 0.5 deg)',
     'rz  range=-180..+180 deg  (1 step = 0.5 deg)',
 )
-_T_CTR    = 300   # ±3.00 m in 1 cm steps → 601 positions, centre = 300
+_TXY_CTR  = 500   # ±5.00 m in 1 cm steps → 1001 positions, centre = 500
+_TZ_CTR   = 1000  # ±10.00 m in 1 cm steps → 2001 positions, centre = 1000
 _R_CTR    = 360   # ±180° in 0.5° steps  → 721 positions, centre = 360
 _TB_RANGE = 'LiDAR color range (max meters)'
 
 def make_trackbars():
-    for name in _TNAMES[:3]:
-        cv2.createTrackbar(name, WIN, _T_CTR, _T_CTR * 2, lambda _: None)
+    for name in _TNAMES[:2]:
+        cv2.createTrackbar(name, WIN, _TXY_CTR, _TXY_CTR * 2, lambda _: None)
+    cv2.createTrackbar(_TNAMES[2], WIN, _TZ_CTR, _TZ_CTR * 2, lambda _: None)
     for name in _TNAMES[3:]:
         cv2.createTrackbar(name, WIN, _R_CTR, _R_CTR * 2, lambda _: None)
     cv2.createTrackbar(_TB_RANGE, WIN, 30, 80, lambda _: None)
     cv2.setTrackbarMin(_TB_RANGE, WIN, 1)
 
 def read_trackbars() -> tuple:
-    tx = (cv2.getTrackbarPos(_TNAMES[0], WIN) - _T_CTR) * 0.01
-    ty = (cv2.getTrackbarPos(_TNAMES[1], WIN) - _T_CTR) * 0.01
-    tz = (cv2.getTrackbarPos(_TNAMES[2], WIN) - _T_CTR) * 0.01
+    tx = (cv2.getTrackbarPos(_TNAMES[0], WIN) - _TXY_CTR) * 0.01
+    ty = (cv2.getTrackbarPos(_TNAMES[1], WIN) - _TXY_CTR) * 0.01
+    tz = (cv2.getTrackbarPos(_TNAMES[2], WIN) - _TZ_CTR)  * 0.01
     rx = (cv2.getTrackbarPos(_TNAMES[3], WIN) - _R_CTR) * 0.5
     ry = (cv2.getTrackbarPos(_TNAMES[4], WIN) - _R_CTR) * 0.5
     rz = (cv2.getTrackbarPos(_TNAMES[5], WIN) - _R_CTR) * 0.5
     return tx, ty, tz, rx, ry, rz
 
 def set_trackbars(tx, ty, tz, rx, ry, rz):
-    cv2.setTrackbarPos(_TNAMES[0], WIN, int(round(tx / 0.01)) + _T_CTR)
-    cv2.setTrackbarPos(_TNAMES[1], WIN, int(round(ty / 0.01)) + _T_CTR)
-    cv2.setTrackbarPos(_TNAMES[2], WIN, int(round(tz / 0.01)) + _T_CTR)
+    cv2.setTrackbarPos(_TNAMES[0], WIN, int(round(tx / 0.01)) + _TXY_CTR)
+    cv2.setTrackbarPos(_TNAMES[1], WIN, int(round(ty / 0.01)) + _TXY_CTR)
+    cv2.setTrackbarPos(_TNAMES[2], WIN, int(round(tz / 0.01)) + _TZ_CTR)
     cv2.setTrackbarPos(_TNAMES[3], WIN, int(round(rx / 0.5))  + _R_CTR)
     cv2.setTrackbarPos(_TNAMES[4], WIN, int(round(ry / 0.5))  + _R_CTR)
     cv2.setTrackbarPos(_TNAMES[5], WIN, int(round(rz / 0.5))  + _R_CTR)
